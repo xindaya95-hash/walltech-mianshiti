@@ -1,22 +1,23 @@
 import os
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from datetime import datetime
+import sqlite3
+import hashlib
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__)
 CORS(app)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, 'crm.db')
+
 def get_db():
-    import sqlite3
-    DB_PATH = os.path.join(os.path.dirname(__file__), 'crm.db')
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 def init_db():
-    import sqlite3, hashlib
-    DB_PATH = os.path.join(os.path.dirname(__file__), 'crm.db')
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY, username TEXT UNIQUE, password TEXT, role TEXT, name TEXT)''')
@@ -31,8 +32,6 @@ def init_db():
     except: pass
     conn.commit()
     conn.close()
-
-init_db()
 
 @app.route('/api/health')
 def health():
@@ -50,15 +49,17 @@ def get_customers():
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    import hashlib
-    data = request.get_json()
-    conn = get_db()
-    user = conn.execute("SELECT * FROM users WHERE username = ? AND password = ?",
-        (data.get('username'), hashlib.md5(data.get('password','').encode()).hexdigest())).fetchone()
-    conn.close()
-    if user:
-        return jsonify({"success": True, "user": dict(user)})
-    return jsonify({"success": False, "error": "Invalid credentials"}), 401
+    try:
+        data = request.get_json()
+        conn = get_db()
+        user = conn.execute("SELECT * FROM users WHERE username = ? AND password = ?",
+            (data.get('username'), hashlib.md5(data.get('password','').encode()).hexdigest())).fetchone()
+        conn.close()
+        if user:
+            return jsonify({"success": True, "user": dict(user)})
+        return jsonify({"success": False, "error": "Invalid credentials"}), 401
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 @app.route('/api/customers', methods=['POST'])
 def add_customer():
@@ -75,4 +76,7 @@ def add_customer():
 
 @app.route('/')
 def index():
-    return app.send_static_file('index.html')
+    return send_from_directory(os.path.join(BASE_DIR, 'static'), 'index.html')
+
+# Initialize DB at module load
+init_db()
