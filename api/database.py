@@ -1,6 +1,5 @@
 import sqlite3
 import hashlib
-from datetime import datetime
 import os
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'crm.db')
@@ -13,39 +12,24 @@ def get_db_connection():
 def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            role TEXT NOT NULL,
-            name TEXT
-        )
-    ''')
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS customers (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            phone TEXT,
-            email TEXT,
-            company TEXT,
-            status TEXT DEFAULT '潜在客户',
-            owner_id INTEGER,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (owner_id) REFERENCES users(id)
-        )
-    ''')
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS interactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            customer_id INTEGER,
-            type TEXT,
-            content TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (customer_id) REFERENCES customers(id)
-        )
-    ''')
-
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL,
+        name TEXT
+    )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS customers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        phone TEXT,
+        email TEXT,
+        company TEXT,
+        status TEXT DEFAULT '潜在客户',
+        owner_id INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (owner_id) REFERENCES users(id)
+    )''')
     try:
         cursor.execute("INSERT INTO users (username, password, role, name) VALUES (?, ?, ?, ?)",
                       ('admin', hashlib.md5('admin123'.encode()).hexdigest(), '管理员', '管理员'))
@@ -79,11 +63,10 @@ def get_all_customers():
 def add_customer(data):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO customers (name, phone, email, company, status, owner_id)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ''', (data.get('name'), data.get('phone'), data.get('email'),
-          data.get('company'), data.get('status', '潜在客户'), data.get('owner_id')))
+    cursor.execute('''INSERT INTO customers (name, phone, email, company, status, owner_id)
+        VALUES (?, ?, ?, ?, ?, ?)''',
+        (data.get('name'), data.get('phone'), data.get('email'),
+         data.get('company'), data.get('status', '潜在客户'), data.get('owner_id')))
     conn.commit()
     customer_id = cursor.lastrowid
     conn.close()
