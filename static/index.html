@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM客户管理系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { color: #1a73e8; margin-bottom: 20px; }
+        .card { background: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn { background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background: #1557b0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; color: #333; }
+        .status { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .status-潜在客户 { background: #e3f2fd; color: #1976d2; }
+        .status-意向客户 { background: #fff3e0; color: #f57c00; }
+        .status-成交客户 { background: #e8f5e9; color: #388e3c; }
+        #loginForm { max-width: 400px; margin: 100px auto; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #666; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div id="loginForm" class="card">
+        <h2>CRM登录</h2>
+        <div class="form-group">
+            <label>用户名</label>
+            <input type="text" id="username" placeholder="请输入用户名">
+        </div>
+        <div class="form-group">
+            <label>密码</label>
+            <input type="password" id="password" placeholder="请输入密码">
+        </div>
+        <button class="btn" onclick="login()">登录</button>
+    </div>
+
+    <div id="mainContent" class="container hidden">
+        <h1>CRM客户管理系统</h1>
+        <div class="card">
+            <h3>客户列表</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>姓名</th>
+                        <th>电话</th>
+                        <th>邮箱</th>
+                        <th>公司</th>
+                        <th>状态</th>
+                        <th>创建时间</th>
+                    </tr>
+                </thead>
+                <tbody id="customerList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        let currentUser = null;
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const res = await fetch(API_URL + '/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password})
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                currentUser = data.user;
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                loadCustomers();
+            } else {
+                alert('登录失败: ' + data.error);
+            }
+        }
+
+        async function loadCustomers() {
+            const res = await fetch(API_URL + '/api/customers');
+            const data = await res.json();
+            if (data.success) {
+                const tbody = document.getElementById('customerList');
+                tbody.innerHTML = data.data.map(c =>
+                    `<tr>
+                        <td>${c.id}</td>
+                        <td>${c.name}</td>
+                        <td>${c.phone || '-'}</td>
+                        <td>${c.email || '-'}</td>
+                        <td>${c.company || '-'}</td>
+                        <td><span class="status status-${c.status}">${c.status}</span></td>
+                        <td>${c.created_at}</td>
+                    </tr>`
+                ).join('');
+            }
+        }
+    </script>
+</body>
+</html>

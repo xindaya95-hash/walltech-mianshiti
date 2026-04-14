@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/wsgi.py",
+      "src": "app.py",
       "use": "@vercel/python"
     }
   ],
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "api/wsgi.py"
+      "destination": "app.py"
     }
   ]
 }
