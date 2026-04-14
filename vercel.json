@@ -2,16 +2,28 @@
   "version": 2,
   "builds": [
     {
+<<<<<<< HEAD
       "src": "api/index.py",
       "use": "@vercel/python"
     },
     {
       "src": "static/**",
+=======
+      "src": "server/app.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "server/static/**",
+>>>>>>> 9a2c669 (Deploy complete CRM system with Supabase PostgreSQL)
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {"src": "/static/(.*)", "dest": "/static/$1"},
+<<<<<<< HEAD
     {"src": "/(.*)", "dest": "/api/index.py"}
+=======
+    {"src": "/(.*)", "dest": "/server/app.py"}
+>>>>>>> 9a2c669 (Deploy complete CRM system with Supabase PostgreSQL)
   ]
 }

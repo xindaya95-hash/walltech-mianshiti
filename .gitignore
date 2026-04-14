@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 __pycache__/
 *.pyc
 *.pyo
@@ -7,3 +8,13 @@ venv/
 env/
 .venv/
 .env
+=======
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+.env
+dist/
+build/
+>>>>>>> 9a2c669 (Deploy complete CRM system with Supabase PostgreSQL)

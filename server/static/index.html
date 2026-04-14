@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>跨境物流 CRM - 客户事件跟进系统</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+    :root {
+        --slate-900: #0f172a;
+        --slate-800: #1e293b;
+        --slate-700: #334155;
+        --slate-600: #475569;
+        --slate-500: #64748b;
+        --slate-400: #94a3b8;
+        --slate-300: #cbd5e1;
+        --slate-200: #e2e8f0;
+        --slate-100: #f1f5f9;
+        --slate-50: #f8fafc;
+        --white: #ffffff;
+        --primary: #3b82f6;
+        --primary-hover: #2563eb;
+        --primary-light: #eff6ff;
+        --success: #10b981;
+        --success-light: #ecfdf5;
+        --warning: #f59e0b;
+        --warning-light: #fffbeb;
+        --danger: #ef4444;
+        --danger-light: #fef2f2;
+        --purple: #8b5cf6;
+        --orange: #f97316;
+        --cyan: #06b6d4;
+        --amber: #f59e0b;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--slate-100);
+        color: var(--slate-800);
+        line-height: 1.6;
+        min-height: 100vh;
+    }
+    .hidden { display: none !important; }
+
+    /* 登录页 */
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--slate-900) 0%, var(--slate-800) 100%);
+        padding: 20px;
+    }
+    .login-card {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 48px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+    }
+    .login-logo {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        font-size: 28px;
+    }
+    .login-title {
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+        color: var(--slate-900);
+        margin-bottom: 8px;
+    }
+    .login-subtitle {
+        text-align: center;
+        color: var(--slate-500);
+        font-size: 14px;
+        margin-bottom: 32px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--slate-700);
+        margin-bottom: 6px;
+    }
+    .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 15px;
+        border: 1.5px solid var(--slate-200);
+        border-radius: 10px;
+        background: var(--white);
+        color: var(--slate-800);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .form-select:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+    .btn-login {
+        width: 100%;
+        padding: 14px 24px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--white);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: 0 4px 14px rgba(59,130,246,0.35);
+    }
+    .btn-login:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(59,130,246,0.4);
+    }
+    .login-info {
+        margin-top: 24px;
+        padding: 16px;
+        background: var(--slate-50);
+        border-radius: 10px;
+        font-size: 13px;
+    }
+    .login-info-title {
+        font-weight: 600;
+        color: var(--slate-700);
+        margin-bottom: 8px;
+    }
+    .login-info-item {
+        color: var(--slate-500);
+        margin-bottom: 4px;
+    }
+    .login-info-item strong { color: var(--slate-700); }
+
+    /* 主应用 */
+    .app { min-height: 100vh; }
+    .header {
+        background: var(--white);
+        border-bottom: 1px solid var(--slate-200);
+        padding: 0 32px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header-logo {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+    .header-title { font-size: 16px; font-weight: 600; color: var(--slate-800); }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 12px;
+        background: var(--slate-50);
+        border-radius: 8px;
+    }
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--cyan) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .user-name { font-size: 14px; font-weight: 500; color: var(--slate-700); }
+    .user-role {
+        font-size: 11px;
+        color: var(--slate-500);
+        background: var(--white);
+        padding: 2px 8px;
+        border-radius: 4px;
+        border: 1px solid var(--slate-200);
+    }
+    .btn-logout {
+        padding: 8px 14px;
+        font-size: 13px;
+        color: var(--slate-600);
+        background: var(--white);
+        border: 1px solid var(--slate-200);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-logout:hover {
+        border-color: var(--danger);
+        color: var(--danger);
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px 32px; }
+
+    /* 页面标题 */
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+    .page-title-group { }
+    .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--slate-900);
+    }
+    .page-subtitle { font-size: 14px; color: var(--slate-500); margin-top: 2px; }
+
+    /* 统计卡片 */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    .stat-card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        border: 1px solid var(--slate-100);
+    }
+    .stat-label { font-size: 13px; color: var(--slate-500); margin-bottom: 8px; }
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--slate-900); }
+    .stat-value.primary { color: var(--primary); }
+    .stat-value.success { color: var(--success); }
+    .stat-value.warning { color: var(--warning); }
+    .stat-value.danger { color: var(--danger); }
+
+    /* 搜索栏 */
+    .search-bar {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid var(--slate-200);
+    }
+    .search-input {
+        flex: 1;
+        padding: 10px 16px;
+        font-size: 14px;
+        border: 1.5px solid var(--slate-200);
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+
+    /* 按钮 */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 18px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+    }
+    .btn-primary { background: var(--primary); color: var(--white); }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--white); color: var(--slate-700); border: 1px solid var(--slate-200); }
+    .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-danger { background: var(--danger); color: var(--white); }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-success { background: var(--success); color: var(--white); }
+    .btn-success:hover { background: #059669; }
+    .btn-sm { padding: 6px 12px; font-size: 13px; }
+
+    /* 客户卡片列表 */
+    .customer-list { display: grid; gap: 12px; }
+    .customer-card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid var(--slate-200);
+    }
+    .customer-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(59,130,246,0.1);
+        transform: translateY(-1px);
+    }
+    .customer-info { flex: 1; }
+    .customer-name { font-size: 16px; font-weight: 600; color: var(--slate-900); margin-bottom: 6px; }
+    .customer-meta { display: flex; gap: 16px; font-size: 13px; color: var(--slate-500); }
+    .customer-meta span { display: flex; align-items: center; gap: 4px; }
+    .customer-stats { display: flex; gap: 32px; text-align: right; }
+    .customer-stat-value { font-size: 20px; font-weight: 700; color: var(--slate-900); }
+    .customer-stat-label { font-size: 12px; color: var(--slate-500); }
+    .customer-arrow { color: var(--slate-400); font-size: 20px; }
+
+    /* 热度指示器 */
+    .heat-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+    .heat-badge.high { background: var(--success-light); color: var(--success); }
+    .heat-badge.medium { background: var(--warning-light); color: var(--warning); }
+    .heat-badge.low { background: var(--danger-light); color: var(--danger); }
+    .heat-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    /* 详情卡片 */
+    .card {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 16px;
+        border: 1px solid var(--slate-200);
+    }
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    .card-title { font-size: 16px; font-weight: 600; color: var(--slate-900); }
+    .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .info-item { }
+    .info-label { font-size: 12px; color: var(--slate-500); margin-bottom: 4px; }
+    .info-value { font-size: 14px; color: var(--slate-800); font-weight: 500; }
+    .info-value.full { grid-column: 1 / -1; }
+
+    /* 跟进记录时间线 */
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        background: var(--slate-200);
+    }
+    .timeline-item { position: relative; margin-bottom: 20px; }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-dot {
+        position: absolute;
+        left: -24px;
+        top: 4px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        color: var(--white);
+        border: 2px solid var(--white);
+    }
+    .timeline-dot.phone_call { background: var(--primary); }
+    .timeline-dot.online_meeting { background: var(--purple); }
+    .timeline-dot.onsite_visit { background: var(--orange); }
+    .timeline-dot.email { background: var(--success); }
+    .timeline-dot.im_chat { background: var(--cyan); }
+    .timeline-dot.other { background: var(--slate-400); }
+    .timeline-content {
+        background: var(--slate-50);
+        border-radius: 10px;
+        padding: 16px;
+        border: 1px solid var(--slate-100);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .timeline-content:hover {
+        border-color: var(--primary);
+        background: var(--primary-light);
+    }
+    .timeline-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .timeline-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .timeline-type.phone_call { background: rgba(59,130,246,0.1); color: var(--primary); }
+    .timeline-type.online_meeting { background: rgba(139,92,246,0.1); color: var(--purple); }
+    .timeline-type.onsite_visit { background: rgba(249,115,22,0.1); color: var(--orange); }
+    .timeline-type.email { background: rgba(16,185,129,0.1); color: var(--success); }
+    .timeline-type.im_chat { background: rgba(6,182,212,0.1); color: var(--cyan); }
+    .timeline-type.other { background: rgba(148,163,184,0.1); color: var(--slate-500); }
+    .timeline-time { font-size: 12px; color: var(--slate-500); }
+    .timeline-text { font-size: 14px; color: var(--slate-700); line-height: 1.6; }
+    .timeline-footer { margin-top: 10px; display: flex; align-items: center; justify-content: space-between; }
+    .timeline-reminder { font-size: 12px; color: var(--slate-500); }
+    .timeline-creator { font-size: 12px; color: var(--slate-400); }
+
+    /* 空状态 */
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        background: var(--slate-100);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+    }
+    .empty-title { font-size: 16px; font-weight: 600; color: var(--slate-700); margin-bottom: 6px; }
+    .empty-desc { font-size: 14px; color: var(--slate-500); }
+
+    /* 加载状态 */
+    .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        color: var(--slate-500);
+    }
+    .loading-spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid var(--slate-200);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* 弹窗 */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15,23,42,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 20px;
+    }
+    .modal {
+        background: var(--white);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 520px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    }
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--slate-200);
+    }
+    .modal-title { font-size: 17px; font-weight: 600; color: var(--slate-900); }
+    .modal-close {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--slate-100);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        color: var(--slate-500);
+        font-size: 18px;
+        transition: all 0.2s;
+    }
+    .modal-close:hover { background: var(--slate-200); color: var(--slate-700); }
+    .modal-body { padding: 24px; }
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 16px 24px;
+        border-top: 1px solid var(--slate-200);
+    }
+
+    .form-textarea {
+        width: 100%;
+        padding: 12px 14px;
+        font-size: 14px;
+        border: 1.5px solid var(--slate-200);
+        border-radius: 10px;
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        transition: all 0.2s;
+    }
+    .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+
+    /* 抽屉 */
+    .drawer-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15,23,42,0.5);
+        z-index: 1000;
+    }
+    .drawer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 480px;
+        background: var(--white);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        overflow-y: auto;
+    }
+    .drawer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--slate-200);
+        position: sticky;
+        top: 0;
+        background: var(--white);
+    }
+    .drawer-title { font-size: 17px; font-weight: 600; color: var(--slate-900); }
+    .drawer-body { padding: 24px; }
+    .drawer-section { margin-bottom: 24px; }
+    .drawer-label { font-size: 12px; color: var(--slate-500); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .drawer-value { font-size: 15px; color: var(--slate-800); }
+    .drawer-text { font-size: 14px; color: var(--slate-700); line-height: 1.7; white-space: pre-wrap; }
+
+    /* 返回按钮 */
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        font-size: 13px;
+        color: var(--slate-600);
+        background: var(--white);
+        border: 1px solid var(--slate-200);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 16px;
+    }
+    .btn-back:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* 权限提示 */
+    .permission-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .permission-hint.admin { background: var(--primary-light); color: var(--primary); }
+    .permission-hint.sales { background: var(--slate-100); color: var(--slate-600); }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+        .container { padding: 16px; }
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .header { padding: 0 16px; }
+        .info-grid { grid-template-columns: 1fr; }
+        .search-bar { flex-wrap: wrap; }
+        .customer-card { flex-direction: column; gap: 16px; }
+        .customer-stats { width: 100%; justify-content: space-between; }
+        .drawer { width: 100%; }
+        .page-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+    </style>
+</head>
+<body>
+    <!-- 登录页面 -->
+    <div id="loginPage" class="login-page hidden">
+        <div class="login-card">
+            <div class="login-logo">📦</div>
+            <h1 class="login-title">跨境物流 CRM</h1>
+            <p class="login-subtitle">客户事件跟进管理系统</p>
+            <div class="form-group">
+                <label class="form-label">选择身份登录</label>
+                <select id="loginSelect" class="form-select">
+                    <option value="">-- 请选择 --</option>
+                    <option value="user-003">👔 王经理 (管理员)</option>
+                    <option value="user-001">👤 张销售 (普通员工)</option>
+                    <option value="user-002">👤 李销售 (普通员工)</option>
+                </select>
+            </div>
+            <button onclick="handleLogin()" class="btn-login">登录系统</button>
+            <div class="login-info">
+                <div class="login-info-title">权限说明</div>
+                <div class="login-info-item">• <strong>管理员</strong>：可管理全部客户，添加跟进记录</div>
+                <div class="login-info-item">• <strong>普通员工</strong>：只能查看并跟进自己负责的客户</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用容器 -->
+    <div id="appContainer" class="app hidden"></div>
+
+    <script>
+    // ========== 全局配置 ==========
+    const API_BASE = 'http://localhost:3002/api/v1/crm';
+    const FOLLOW_UP_TYPES = [
+        { key: 'phone_call', label: '电话沟通', icon: '📞' },
+        { key: 'online_meeting', label: '线上会议', icon: '💻' },
+        { key: 'onsite_visit', label: '上门拜访', icon: '🏢' },
+        { key: 'email', label: '邮件往来', icon: '✉️' },
+        { key: 'im_chat', label: 'IM沟通', icon: '💬' },
+        { key: 'other', label: '其他', icon: '📋' }
+    ];
+    const USER_NAMES = { 'user-003': '王经理', 'user-001': '张销售', 'user-002': '李销售' };
+    const USER_INITIALS = { 'user-003': '王', 'user-001': '张', 'user-002': '李' };
+
+    // ========== DOM 元素 ==========
+    const app = document.getElementById('appContainer');
+    const loginPage = document.getElementById('loginPage');
+
+    // ========== 工具函数 ==========
+    function render(html) { app.innerHTML = html; }
+    function formatDate(str) { if (!str) return '-'; return new Date(str).toLocaleDateString('zh-CN'); }
+    function formatDateTime(str) { if (!str) return '-'; const d = new Date(str); return `${d.toLocaleDateString('zh-CN')} ${d.toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'})}`; }
+    function formatTimeAgo(str) {
+        if (!str) return '-';
+        const d = new Date(str), now = new Date(), diff = Math.floor((now - d) / 1000);
+        if (diff < 60) return '刚刚';
+        if (diff < 3600) return `${Math.floor(diff/60)}分钟前`;
+        if (diff < 86400) return `${Math.floor(diff/3600)}小时前`;
+        if (diff < 172800) return '昨天';
+        if (diff < 604800) return `${Math.floor(diff/86400)}天前`;
+        return formatDate(str);
+    }
+    function getHeatLevel(score) { if (score >= 80) return 'high'; if (score >= 50) return 'medium'; return 'low'; }
+    function getHeatLabel(score) { if (score >= 80) return '活跃'; if (score >= 50) return '一般'; return '较低'; }
+    function stripHtml(html) { const tmp = document.createElement('div'); tmp.innerHTML = html || ''; return tmp.textContent || tmp.innerText || ''; }
+    function getFollowUpTypeConfig(key) { return FOLLOW_UP_TYPES.find(t => t.key === key) || { key, label: key, icon: '📋' }; }
+    function getTodayDate() { return new Date().toISOString().split('T')[0]; }
+
+    // ========== API 请求 ==========
+    async function apiRequest(endpoint, options = {}) {
+        try {
+            const userId = localStorage.getItem('userId');
+            const userRole = localStorage.getItem('userRole');
+            const headers = { 'Content-Type': 'application/json' };
+            if (userId) headers['X-User-Id'] = userId;
+            if (userRole) headers['X-User-Role'] = userRole;
+            const res = await fetch(`${API_BASE}${endpoint}`, { headers, ...options });
+            let data;
+            try { data = JSON.parse(await res.text()); } catch { throw new Error('服务器返回格式错误'); }
+            if (!res.ok) throw new Error(data.error || `请求失败: ${res.status}`);
+            return data;
+        } catch (e) {
+            console.error('API请求失败:', e);
+            if (e.message.includes('fetch') || e.message.includes('NetworkError')) {
+                throw new Error('无法连接到服务器，请确保后端服务已启动');
+            }
+            throw e;
+        }
+    }
+
+    // ========== 登录/登出 ==========
+    function handleLogin() {
+        const userId = document.getElementById('loginSelect').value;
+        if (!userId) { alert('请选择您的身份'); return; }
+        localStorage.setItem('userId', userId);
+        localStorage.setItem('userRole', userId === 'user-003' ? 'admin' : 'sales');
+        localStorage.setItem('currentUser', JSON.stringify({ id: userId, name: USER_NAMES[userId], role: userId === 'user-003' ? 'admin' : 'sales' }));
+        init();
+    }
+
+    function logout() {
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('currentUser');
+        window.location.reload();
+    }
+
+    // ========== 全局状态 ==========
+    let g_customerId = null;
+    let g_customerData = null;
+
+    // ========== 渲染页头 ==========
+    function renderHeader() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const isAdmin = currentUser.role === 'admin';
+        const initials = USER_INITIALS[currentUser.id] || currentUser.name?.[0] || '?';
+        return `
+            <header class="header">
+                <div class="header-left">
+                    <div class="header-logo">📦</div>
+                    <span class="header-title">跨境物流 CRM</span>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar">${initials}</div>
+                        <span class="user-name">${currentUser.name || '用户'}</span>
+                        <span class="user-role">${isAdmin ? '管理员' : '普通员工'}</span>
+                    </div>
+                    <button onclick="logout()" class="btn-logout">退出</button>
+                </div>
+            </header>`;
+    }
+
+    // ========== 客户列表 ==========
+    async function showCustomerList() {
+        render(`<div class="container">${renderHeader()}<div class="loading"><div class="loading-spinner"></div><span>加载中...</span></div></div>`);
+        try {
+            const data = await apiRequest('/customers');
+            const customers = Array.isArray(data) ? data : (data.customers || []);
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const isAdmin = currentUser.role === 'admin';
+            const totalFollowUps = customers.reduce((sum, c) => sum + (c.follow_up_count || 0), 0);
+            const avgHeat = customers.length ? Math.round(customers.reduce((sum, c) => sum + (c.heat_score || 0), 0) / customers.length) : 0;
+
+            render(`
+            <div class="container">
+                ${renderHeader()}
+                <div class="page-header">
+                    <div class="page-title-group">
+                        <h1 class="page-title">客户列表</h1>
+                        <p class="page-subtitle">共 ${customers.length} 位客户</p>
+                    </div>
+                    <button onclick="showAddCustomerModal()" class="btn btn-primary">+ 添加客户</button>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">客户总数</div>
+                        <div class="stat-value primary">${customers.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">跟进记录</div>
+                        <div class="stat-value success">${totalFollowUps}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">平均热度</div>
+                        <div class="stat-value warning">${avgHeat}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">我的权限</div>
+                        <div class="stat-value" style="font-size:16px">${isAdmin ? '全部客户' : '负责客户'}</div>
+                    </div>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" class="search-input" placeholder="搜索客户名称、联系人或电话..." onkeyup="handleSearch(event)">
+                    <button class="btn btn-primary" onclick="searchCustomers()">搜索</button>
+                    <button class="btn btn-secondary" onclick="showCustomerList()">重置</button>
+                </div>
+                ${customers.length === 0 ? `
+                    <div class="card">
+                        <div class="empty-state">
+                            <div class="empty-icon">📋</div>
+                            <div class="empty-title">暂无客户</div>
+                            <div class="empty-desc">没有找到匹配的客户</div>
+                        </div>
+                    </div>` : `
+                    <div class="customer-list">
+                        ${customers.map(c => {
+                            const heatLevel = getHeatLevel(c.heat_score || 0);
+                            return `
+                            <div class="customer-card" onclick="showCustomerDetail('${c.id}')">
+                                <div class="customer-info">
+                                    <div class="customer-name">${c.name}</div>
+                                    <div class="customer-meta">
+                                        <span>👤 ${c.contact_name || '-'}</span>
+                                        <span>📱 ${c.contact_phone || '-'}</span>
+                                        <span>🏭 ${c.industry || '-'}</span>
+                                    </div>
+                                </div>
+                                <div class="customer-stats">
+                                    <div class="customer-stat">
+                                        <div class="customer-stat-value">${c.follow_up_count || 0}</div>
+                                        <div class="customer-stat-label">跟进次数</div>
+                                    </div>
+                                    <div class="customer-stat">
+                                        <div class="customer-stat-value">${c.heat_score || 0}</div>
+                                        <div class="customer-stat-label">热度</div>
+                                    </div>
+                                </div>
+                                <div class="heat-badge ${heatLevel}"><span class="heat-dot"></span>${getHeatLabel(c.heat_score || 0)}</div>
+                                <div class="customer-arrow">→</div>
+                            </div>`;
+                        }).join('')}
+                    </div>`}
+            </div>`);
+        } catch (e) {
+            render(`<div class="container">${renderHeader()}<div class="card"><div class="empty-state"><div class="empty-icon">❌</div><div class="empty-title">加载失败</div><div class="empty-desc">${e.message}</div><button class="btn btn-primary" onclick="showCustomerList()">重试</button></div></div></div>`);
+        }
+    }
+
+    function handleSearch(event) { if (event.key === 'Enter') searchCustomers(); }
+
+    function searchCustomers() {
+        const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+        showCustomerListFiltered(keyword);
+    }
+
+    async function showCustomerListFiltered(keyword) {
+        try {
+            const data = await apiRequest('/customers');
+            let customers = Array.isArray(data) ? data : (data.customers || []);
+            if (keyword) {
+                customers = customers.filter(c =>
+                    (c.name || '').toLowerCase().includes(keyword) ||
+                    (c.contact_name || '').toLowerCase().includes(keyword) ||
+                    (c.contact_phone || '').toLowerCase().includes(keyword)
+                );
+            }
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const isAdmin = currentUser.role === 'admin';
+
+            if (customers.length === 0) {
+                document.querySelector('.customer-list')?.remove();
+                const container = document.querySelector('.container');
+                const searchBar = document.querySelector('.search-bar');
+                const emptyCard = document.createElement('div');
+                emptyCard.className = 'card';
+                emptyCard.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">未找到客户</div><div class="empty-desc">没有找到匹配"${keyword}"的客户</div></div>`;
+                container.insertBefore(emptyCard, searchBar.nextSibling);
+                return;
+            }
+
+            document.querySelector('.page-subtitle').textContent = `共 ${customers.length} 位客户（筛选后）`;
+
+            const listHtml = customers.map(c => {
+                const heatLevel = getHeatLevel(c.heat_score || 0);
+                return `
+                <div class="customer-card" onclick="showCustomerDetail('${c.id}')">
+                    <div class="customer-info">
+                        <div class="customer-name">${c.name}</div>
+                        <div class="customer-meta">
+                            <span>👤 ${c.contact_name || '-'}</span>
+                            <span>📱 ${c.contact_phone || '-'}</span>
+                            <span>🏭 ${c.industry || '-'}</span>
+                        </div>
+                    </div>
+                    <div class="customer-stats">
+                        <div class="customer-stat">
+                            <div class="customer-stat-value">${c.follow_up_count || 0}</div>
+                            <div class="customer-stat-label">跟进次数</div>
+                        </div>
+                        <div class="customer-stat">
+                            <div class="customer-stat-value">${c.heat_score || 0}</div>
+                            <div class="customer-stat-label">热度</div>
+                        </div>
+                    </div>
+                    <div class="heat-badge ${heatLevel}"><span class="heat-dot"></span>${getHeatLabel(c.heat_score || 0)}</div>
+                    <div class="customer-arrow">→</div>
+                </div>`;
+            }).join('');
+
+            document.querySelector('.customer-list').innerHTML = listHtml;
+        } catch (e) {
+            alert('搜索失败: ' + e.message);
+        }
+    }
+
+    // ========== 客户详情 ==========
+    async function showCustomerDetail(customerId) {
+        g_customerId = customerId;
+        render(`<div class="container">${renderHeader()}<div class="loading"><div class="loading-spinner"></div><span>加载中...</span></div></div>`);
+        try {
+            const customer = await apiRequest(`/customers/${customerId}`);
+            g_customerData = customer;
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const isAdmin = currentUser.role === 'admin';
+            renderCustomerDetail(customer, isAdmin, currentUser);
+        } catch (e) {
+            render(`<div class="container">${renderHeader()}<div class="card"><div class="empty-state"><div class="empty-icon">❌</div><div class="empty-title">加载失败</div><div class="empty-desc">${e.message}</div><button class="btn btn-primary" onclick="showCustomerDetail('${customerId}')">重试</button></div></div></div>`);
+        }
+    }
+
+    function renderCustomerDetail(c, isAdmin, currentUser) {
+        const heatLevel = getHeatLevel(c.heat_score || 0);
+        const isOwner = c.owner_id === currentUser.id;
+        const canManage = isAdmin || isOwner;
+
+        render(`
+        <div class="container">
+            ${renderHeader()}
+            <button onclick="showCustomerList()" class="btn-back">← 返回列表</button>
+            <div class="page-header">
+                <div class="page-title-group">
+                    <h1 class="page-title">${c.name}</h1>
+                    <p class="page-subtitle">客户详情</p>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px">
+                    <div class="heat-badge ${heatLevel}"><span class="heat-dot"></span>${getHeatLabel(c.heat_score || 0)} (${c.heat_score || 0}分)</div>
+                    ${canManage ? `<button onclick="showEditCustomerModal('${c.id}')" class="btn btn-secondary btn-sm">✏️ 编辑</button>` : ''}
+                    ${canManage ? `<button onclick="deleteCustomer('${c.id}')" class="btn btn-danger btn-sm">🗑️ 删除</button>` : ''}
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">跟进次数</div>
+                    <div class="stat-value primary">${c.follow_up_count || 0}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">最后跟进</div>
+                    <div class="stat-value" style="font-size:18px">${formatTimeAgo(c.last_follow_up_time)}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">下次跟进</div>
+                    <div class="stat-value" style="font-size:18px">${c.next_follow_up_time ? formatDate(c.next_follow_up_time) : '未设置'}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">负责人</div>
+                    <div class="stat-value" style="font-size:16px">${c.owner_name || '-'}</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">基本信息</span>
+                    <span class="permission-hint ${isAdmin ? 'admin' : 'sales'}">
+                        ${isAdmin ? '👑 管理员可见' : isOwner ? '👤 负责客户' : '🔒 无权操作'}
+                    </span>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">联系人</div>
+                        <div class="info-value">${c.contact_name || '-'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">联系电话</div>
+                        <div class="info-value">${c.contact_phone || '-'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">所属行业</div>
+                        <div class="info-value">${c.industry || '-'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">公司规模</div>
+                        <div class="info-value">${c.company_size || '-'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">客户来源</div>
+                        <div class="info-value">${c.source || '-'}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">创建时间</div>
+                        <div class="info-value">${formatDate(c.created_at)}</div>
+                    </div>
+                    <div class="info-item full">
+                        <div class="info-label">备注</div>
+                        <div class="info-value">${c.notes || '-'}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">跟进记录 (${(c.follow_ups || []).length})</span>
+                    ${canAddFollowUp ? `<button onclick="showAddFollowUpModal('${c.id}')" class="btn btn-primary btn-sm">+ 添加跟进</button>` : `<span style="font-size:12px;color:var(--slate-400)">仅负责人可添加跟进</span>`}
+                </div>
+                ${renderFollowUpList(c.follow_ups || [], isAdmin, currentUser.id)}
+            </div>
+        </div>`);
+    }
+
+    function renderFollowUpList(followUps, isAdmin, currentUserId) {
+        if (!followUps.length) return `<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-title">暂无跟进记录</div><div class="empty-desc">点击上方按钮添加第一条跟进记录</div></div>`;
+
+        return `<div class="timeline">${followUps.map(f => {
+            const type = getFollowUpTypeConfig(f.follow_up_type);
+            const canDelete = isAdmin || f.created_by === currentUserId;
+            return `
+            <div class="timeline-item">
+                <div class="timeline-dot ${f.follow_up_type}">${type.icon}</div>
+                <div class="timeline-content" onclick="showFollowUpDetail('${f.id}')">
+                    <div class="timeline-header">
+                        <span class="timeline-type ${f.follow_up_type}">${type.icon} ${type.label}</span>
+                        <span class="timeline-time">${formatDate(f.follow_up_time)}</span>
+                    </div>
+                    <div class="timeline-text">${stripHtml(f.content || '').substring(0, 120)}${(f.content || '').length > 120 ? '...' : ''}</div>
+                    <div class="timeline-footer">
+                        <span class="timeline-reminder">${f.next_reminder_time ? `📅 下次跟进: ${formatDate(f.next_reminder_time)}` : ''}</span>
+                        <span class="timeline-creator">👤 ${f.creator_name || '未知'}</span>
+                    </div>
+                </div>
+            </div>`;
+        }).join('')}</div>`;
+    }
+
+    // ========== 添加跟进记录 ==========
+    function showAddFollowUpModal(customerId) {
+        const modal = document.createElement('div');
+        modal.id = 'followUpModal';
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal">
+                <div class="modal-header">
+                    <span class="modal-title">添加跟进记录</span>
+                    <button onclick="closeModal()" class="modal-close">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">跟进类型</label>
+                        <select id="followUpType" class="form-select">${FOLLOW_UP_TYPES.map(t => `<option value="${t.key}">${t.icon} ${t.label}</option>`).join('')}</select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">跟进日期</label>
+                        <input type="date" id="followUpTime" class="form-select" value="${getTodayDate()}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">跟进内容 <span style="color:var(--danger)">*</span></label>
+                        <textarea id="followUpContent" class="form-textarea" placeholder="请输入跟进内容..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">客户反馈</label>
+                        <textarea id="customerFeedback" class="form-textarea" placeholder="请输入客户反馈（可选）..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">下次跟进日期</label>
+                        <input type="date" id="nextFollowUpTime" class="form-select">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="closeModal()" class="btn btn-secondary">取消</button>
+                    <button onclick="submitFollowUp('${customerId}')" class="btn btn-primary">保存</button>
+                </div>
+            </div>`;
+        document.body.appendChild(modal);
+    }
+
+    function closeModal() { const m = document.getElementById('followUpModal'); if (m) m.remove(); }
+    function closeCustomerModal() { const m = document.getElementById('customerModal'); if (m) m.remove(); }
+
+    // ========== 添加客户 ==========
+    function showAddCustomerModal() {
+        const modal = document.createElement('div');
+        modal.id = 'customerModal';
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal">
+                <div class="modal-header">
+                    <span class="modal-title">添加新客户</span>
+                    <button onclick="closeCustomerModal()" class="modal-close">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">客户名称 <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="customerName" class="form-select" placeholder="请输入客户名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">联系人</label>
+                        <input type="text" id="customerContact" class="form-select" placeholder="请输入联系人姓名">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">联系电话</label>
+                        <input type="text" id="customerPhone" class="form-select" placeholder="请输入联系电话">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">所属行业</label>
+                        <select id="customerIndustry" class="form-select">
+                            <option value="">请选择</option>
+                            <option value="跨境电商">跨境电商</option>
+                            <option value="国际物流">国际物流</option>
+                            <option value="货代公司">货代公司</option>
+                            <option value="进出口贸易">进出口贸易</option>
+                            <option value="化工">化工</option>
+                            <option value="制造业">制造业</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">公司规模</label>
+                        <select id="customerScale" class="form-select">
+                            <option value="">请选择</option>
+                            <option value="微型企业">微型企业 (&lt;10人)</option>
+                            <option value="小型企业">小型企业 (10-50人)</option>
+                            <option value="中型企业">中型企业 (50-200人)</option>
+                            <option value="大型企业">大型企业 (>200人)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">客户来源</label>
+                        <select id="customerSource" class="form-select">
+                            <option value="">请选择</option>
+                            <option value="电话营销">电话营销</option>
+                            <option value="网络推广">网络推广</option>
+                            <option value="客户推荐">客户推荐</option>
+                            <option value="展会">展会</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">客户等级</label>
+                        <select id="customerLevel" class="form-select">
+                            <option value="A">A级 - 重点客户</option>
+                            <option value="B">B级 - 普通客户</option>
+                            <option value="C" selected>C级 - 潜在客户</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">地址</label>
+                        <input type="text" id="customerAddress" class="form-select" placeholder="请输入公司地址">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">备注</label>
+                        <textarea id="customerNotes" class="form-textarea" placeholder="请输入备注信息..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="closeCustomerModal()" class="btn btn-secondary">取消</button>
+                    <button onclick="submitCustomer()" class="btn btn-primary">保存</button>
+                </div>
+            </div>`;
+        document.body.appendChild(modal);
+    }
+
+    async function submitCustomer() {
+        const name = document.getElementById('customerName').value.trim();
+        if (!name) { alert('请输入客户名称'); return; }
+
+        try {
+            await apiRequest('/customers', {
+                method: 'POST',
+                body: JSON.stringify({
+                    name,
+                    contact_name: document.getElementById('customerContact').value.trim(),
+                    contact_phone: document.getElementById('customerPhone').value.trim(),
+                    industry: document.getElementById('customerIndustry').value,
+                    scale: document.getElementById('customerScale').value,
+                    source: document.getElementById('customerSource').value,
+                    level: document.getElementById('customerLevel').value,
+                    address: document.getElementById('customerAddress').value.trim(),
+                    notes: document.getElementById('customerNotes').value.trim()
+                })
+            });
+            closeCustomerModal();
+            showCustomerList();
+        } catch (e) { alert('添加失败: ' + e.message); }
+    }
+
+    // ========== 编辑客户 ==========
+    let g_editCustomerData = null;
+    async function showEditCustomerModal(customerId) {
+        try {
+            const customer = await apiRequest(`/customers/${customerId}`);
+            g_editCustomerData = customer;
+            const modal = document.createElement('div');
+            modal.id = 'customerModal';
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <div class="modal-header">
+                        <span class="modal-title">编辑客户信息</span>
+                        <button onclick="closeCustomerModal()" class="modal-close">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="form-label">客户名称 <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="customerName" class="form-select" value="${customer.name || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">联系人</label>
+                            <input type="text" id="customerContact" class="form-select" value="${customer.contact_name || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">联系电话</label>
+                            <input type="text" id="customerPhone" class="form-select" value="${customer.contact_phone || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">所属行业</label>
+                            <select id="customerIndustry" class="form-select">
+                                <option value="">请选择</option>
+                                <option value="跨境电商" ${customer.industry === '跨境电商' ? 'selected' : ''}>跨境电商</option>
+                                <option value="国际物流" ${customer.industry === '国际物流' ? 'selected' : ''}>国际物流</option>
+                                <option value="货代公司" ${customer.industry === '货代公司' ? 'selected' : ''}>货代公司</option>
+                                <option value="进出口贸易" ${customer.industry === '进出口贸易' ? 'selected' : ''}>进出口贸易</option>
+                                <option value="化工" ${customer.industry === '化工' ? 'selected' : ''}>化工</option>
+                                <option value="制造业" ${customer.industry === '制造业' ? 'selected' : ''}>制造业</option>
+                                <option value="其他" ${customer.industry === '其他' ? 'selected' : ''}>其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">公司规模</label>
+                            <select id="customerScale" class="form-select">
+                                <option value="">请选择</option>
+                                <option value="微型企业" ${customer.scale === '微型企业' ? 'selected' : ''}>微型企业 (&lt;10人)</option>
+                                <option value="小型企业" ${customer.scale === '小型企业' ? 'selected' : ''}>小型企业 (10-50人)</option>
+                                <option value="中型企业" ${customer.scale === '中型企业' ? 'selected' : ''}>中型企业 (50-200人)</option>
+                                <option value="大型企业" ${customer.scale === '大型企业' ? 'selected' : ''}>大型企业 (>200人)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">客户来源</label>
+                            <select id="customerSource" class="form-select">
+                                <option value="">请选择</option>
+                                <option value="电话营销" ${customer.source === '电话营销' ? 'selected' : ''}>电话营销</option>
+                                <option value="网络推广" ${customer.source === '网络推广' ? 'selected' : ''}>网络推广</option>
+                                <option value="客户推荐" ${customer.source === '客户推荐' ? 'selected' : ''}>客户推荐</option>
+                                <option value="展会" ${customer.source === '展会' ? 'selected' : ''}>展会</option>
+                                <option value="其他" ${customer.source === '其他' ? 'selected' : ''}>其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">客户等级</label>
+                            <select id="customerLevel" class="form-select">
+                                <option value="A" ${customer.level === 'A' ? 'selected' : ''}>A级 - 重点客户</option>
+                                <option value="B" ${customer.level === 'B' ? 'selected' : ''}>B级 - 普通客户</option>
+                                <option value="C" ${customer.level === 'C' ? 'selected' : ''}>C级 - 潜在客户</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">地址</label>
+                            <input type="text" id="customerAddress" class="form-select" value="${customer.address || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">备注</label>
+                            <textarea id="customerNotes" class="form-textarea">${customer.notes || ''}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button onclick="closeCustomerModal()" class="btn btn-secondary">取消</button>
+                        <button onclick="updateCustomer('${customerId}')" class="btn btn-primary">保存修改</button>
+                    </div>
+                </div>`;
+            document.body.appendChild(modal);
+        } catch (e) { alert('加载客户信息失败: ' + e.message); }
+    }
+
+    async function updateCustomer(customerId) {
+        const name = document.getElementById('customerName').value.trim();
+        if (!name) { alert('请输入客户名称'); return; }
+
+        try {
+            await apiRequest(`/customers/${customerId}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    name,
+                    contact_name: document.getElementById('customerContact').value.trim(),
+                    contact_phone: document.getElementById('customerPhone').value.trim(),
+                    industry: document.getElementById('customerIndustry').value,
+                    scale: document.getElementById('customerScale').value,
+                    source: document.getElementById('customerSource').value,
+                    level: document.getElementById('customerLevel').value,
+                    address: document.getElementById('customerAddress').value.trim(),
+                    notes: document.getElementById('customerNotes').value.trim()
+                })
+            });
+            closeCustomerModal();
+            showCustomerDetail(customerId);
+        } catch (e) { alert('更新失败: ' + e.message); }
+    }
+
+    // ========== 删除客户 ==========
+    async function deleteCustomer(customerId) {
+        if (!confirm('确定要删除此客户吗？删除后无法恢复。')) return;
+        try {
+            await apiRequest(`/customers/${customerId}`, { method: 'DELETE' });
+            showCustomerList();
+        } catch (e) { alert('删除失败: ' + e.message); }
+    }
+
+    async function submitFollowUp(customerId) {
+        const followUpTime = document.getElementById('followUpTime').value;
+        const content = document.getElementById('followUpContent').value.trim();
+        if (!content) { alert('请输入跟进内容'); return; }
+        if (!followUpTime) { alert('请选择跟进日期'); return; }
+
+        try {
+            await apiRequest(`/customers/${customerId}/follow-ups`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    follow_up_type: document.getElementById('followUpType').value,
+                    follow_up_time: new Date(followUpTime + 'T00:00:00').toISOString(),
+                    content,
+                    customer_feedback: document.getElementById('customerFeedback').value.trim(),
+                    next_reminder_time: document.getElementById('nextFollowUpTime').value ? new Date(document.getElementById('nextFollowUpTime').value + 'T00:00:00').toISOString() : null
+                })
+            });
+            closeModal();
+            showCustomerDetail(customerId);
+        } catch (e) { alert('添加失败: ' + e.message); }
+    }
+
+    // ========== 跟进详情 ==========
+    async function showFollowUpDetail(recordId) {
+        try {
+            const record = await apiRequest(`/follow-ups/${recordId}`);
+            const type = getFollowUpTypeConfig(record.follow_up_type);
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const isAdmin = currentUser.role === 'admin';
+            const canDelete = isAdmin || record.created_by === currentUser.id;
+
+            const drawer = document.createElement('div');
+            drawer.id = 'detailDrawer';
+            drawer.className = 'drawer-overlay';
+            drawer.onclick = (e) => { if (e.target === drawer) drawer.remove(); };
+            drawer.innerHTML = `
+                <div class="drawer">
+                    <div class="drawer-header">
+                        <span class="drawer-title">跟进详情</span>
+                        <button onclick="closeDrawer()" class="modal-close">×</button>
+                    </div>
+                    <div class="drawer-body">
+                        <div class="drawer-section">
+                            <span class="timeline-type ${record.follow_up_type}">${type.icon} ${type.label}</span>
+                        </div>
+                        <div class="drawer-section">
+                            <div class="drawer-label">跟进日期</div>
+                            <div class="drawer-value">${formatDate(record.follow_up_time)}</div>
+                        </div>
+                        <div class="drawer-section">
+                            <div class="drawer-label">跟进内容</div>
+                            <div class="drawer-text">${record.content || '-'}</div>
+                        </div>
+                        ${record.customer_feedback ? `
+                        <div class="drawer-section">
+                            <div class="drawer-label">客户反馈</div>
+                            <div class="drawer-text">${record.customer_feedback}</div>
+                        </div>` : ''}
+                        ${record.next_reminder_time ? `
+                        <div class="drawer-section">
+                            <div class="drawer-label">下次跟进</div>
+                            <div class="drawer-value">${formatDate(record.next_reminder_time)}</div>
+                        </div>` : ''}
+                        <div class="drawer-section">
+                            <div class="drawer-label">记录人</div>
+                            <div class="drawer-value">👤 ${record.creator_name || '未知'}</div>
+                        </div>
+                        <div class="drawer-section">
+                            <div class="drawer-label">创建时间</div>
+                            <div class="drawer-value">${formatDateTime(record.created_at)}</div>
+                        </div>
+                        ${canDelete ? `
+                        <div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--slate-200)">
+                            <button onclick="deleteFollowUp('${record.id}')" class="btn btn-danger" style="width:100%">🗑 撤销此记录</button>
+                        </div>` : ''}
+                    </div>
+                </div>`;
+            document.body.appendChild(drawer);
+        } catch (e) { alert('加载详情失败: ' + e.message); }
+    }
+
+    function closeDrawer() { const d = document.getElementById('detailDrawer'); if (d) d.remove(); }
+
+    async function deleteFollowUp(recordId) {
+        if (!confirm('确定要撤销这条跟进记录吗？此操作不可恢复。')) return;
+        try {
+            await apiRequest(`/follow-ups/${recordId}`, { method: 'DELETE' });
+            closeDrawer();
+            showCustomerDetail(g_customerId);
+        } catch (e) { alert('撤销失败: ' + e.message); }
+    }
+
+    // ========== 全局错误处理 ==========
+    window.addEventListener('error', (event) => console.error('页面错误:', event.error));
+    window.addEventListener('unhandledrejection', (event) => console.error('未处理的Promise拒绝:', event.reason));
+
+    // ========== 初始化 ==========
+    function init() {
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            loginPage.classList.add('hidden');
+            app.classList.remove('hidden');
+            showCustomerList();
+        } else {
+            loginPage.classList.remove('hidden');
+            app.classList.add('hidden');
+        }
+    }
+    init();
+    </script>
+</body>
+</html>
