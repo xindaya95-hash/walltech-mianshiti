@@ -76,7 +76,7 @@ def add_customer():
 
 @app.route('/')
 def index():
-    return send_from_directory(os.path.join(BASE_DIR, 'static'), 'index.html')
+    return send_from_directory(os.path.join(BASE_DIR, '..', 'static'), 'index.html')
 
 # Initialize DB at module load
 init_db()
