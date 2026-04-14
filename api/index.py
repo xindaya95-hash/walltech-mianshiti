@@ -9,11 +9,11 @@ from urllib.parse import urlparse
 app = Flask(__name__)
 CORS(app)
 
-# 数据库连接配置
-DATABASE_URL = os.environ.get("DATABASE_URL")
-
 def get_db_connection():
     """获取数据库连接"""
+    DATABASE_URL = os.environ.get("DATABASE_URL")
+    if not DATABASE_URL:
+        raise Exception("DATABASE_URL environment variable is not set")
     return psycopg2.connect(DATABASE_URL)
 
 @app.route("/api/health")
